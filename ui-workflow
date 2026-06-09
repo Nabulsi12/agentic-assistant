@@ -1,11 +1,12 @@
-Arkay Solutions Workflow Documentation-
+Arkay Solutions User Facing Workflow Documentation-
 
 Planned New Process for Further Improvement:
 1. Get Leads/Attention
 ---Blog
 ---LinkedIn(Through posting, "if interested comment your email and I'll send you a DM" or DM'ing)
+---Workshops -- EventBrik, Luma(WILL NOT CONNECT TO ANYTHING)- Can Download into a csv file and wont do anything unless managed
 
-2. Emailing
+2. Emailing: (On back end) MailChimp collects, validates contact info. Also, sends batch emails and tracks responses. 
 ---Through email sending newsletters and interest emails(For example: "Are you a business and want to get better", something of the sort to drive clients to service)
 ---Email should have Calendy Booking option, as well as, Business Information Intake Form
 
