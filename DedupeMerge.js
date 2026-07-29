@@ -138,54 +138,10 @@ const DedupeMerge = {
     return merged;
   },
 
-  // Atomic lookup-and-write (wraps the lookup-merge-write in a script lock)
+  // Delegate intake to ContactManager
   ingestContact(rawInput) {
-    const lock = LockService.getScriptLock();
-    let lockAcquired = false;
-    
-    try {
-      // Wait up to 10 seconds for concurrent tasks to clear
-      lock.waitLock(10000);
-      lockAcquired = true;
-
-      // 1. Normalize raw input to our schema
-      const incoming = Schema.normalizeContact(rawInput);
-      
-      // 2. Lookup existing contact
-      const match = Database.findContactRowByEmail(incoming.email);
-      
-      let finalContact;
-      if (match) {
-        // Merge field-by-field
-        finalContact = this.merge(match.rowData, incoming);
-      } else {
-        // Set initial status tag for new contact
-        const tagsList = Schema.parseTags(incoming.tags);
-        tagsList.push(`source:${incoming.source}`);
-        tagsList.push(`status:${incoming.lifecycle_state}`);
-        if (incoming.event_name) {
-          const eventSlug = incoming.event_name.toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '');
-          tagsList.push(`event:${eventSlug}`);
-        }
-        
-        incoming.tags = Schema.formatTags(tagsList);
-        finalContact = incoming;
-      }
-
-      // 3. Write to Google Sheets
-      const rowIndex = Database.saveContact(finalContact);
-      return { contact: finalContact, rowIndex, isUpdate: !!match };
-
-    } catch (e) {
-      // Log errors
-      ErrorHandler.logError('DedupeMerge.ingestContact', 'INGEST_FAILED', e.toString(), JSON.stringify(rawInput));
-      throw e;
-    } finally {
-      if (lockAcquired) {
-        lock.releaseLock();
-      }
-    }
+    const result = ContactManager.ingestContact(rawInput);
+    return { contact: result.contact, rowIndex: result.contactId, isUpdate: result.isUpdate };
   }
 };
+
