@@ -32,6 +32,14 @@ const Config = {
     return this.getProperty('ZEROBOUNCE_API_KEY');
   },
 
+  getSupabaseUrl() {
+    return this.getProperty('SUPABASE_URL', 'https://mock-supabase.supabase.co');
+  },
+
+  getSupabaseKey() {
+    return this.getProperty('SUPABASE_KEY', 'mock-supabase-key');
+  },
+
   getEmailOctopusApiKey() {
     return this.getProperty('EO_API_KEY');
   },
