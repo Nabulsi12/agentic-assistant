@@ -1,106 +1,50 @@
 /**
- * OutcomeParser - Parses Gmail unread replies for WON/LOST mailto log outcomes,
- * updating contact states idempotently.
+ * OutcomeParser - Parses call outcomes (WON / LOST / NO-SHOW)
+ * and updates contact lifecycle state in the Supabase Knowledge Graph idempotently.
  */
 const OutcomeParser = {
-  // Search and parse outcome emails (runs on 15-minute cycle)
-  parseGmailOutcomes() {
-    const rachelEmail = Config.getCalendarOwnerEmail();
-    if (!rachelEmail) return;
+  // Process outcome update
+  processOutcome(email, outcomeResult) {
+    if (!email || !outcomeResult) return { success: false, reason: 'missing_parameters' };
+    const searchEmail = email.trim().toLowerCase();
+    const result = outcomeResult.trim().toLowerCase();
 
-    // Search for unread mail to Rachel containing WON: or LOST:
-    const query = `is:unread (subject:"WON:" OR subject:"LOST:")`;
-    let threads = [];
-    
-    try {
-      threads = GmailApp.search(query);
-    } catch (e) {
-      Logger.log('OutcomeParser: GmailApp search failed: ' + e.toString());
-      return;
+    const match = Database.findContactRowByEmail(searchEmail);
+    if (!match) {
+      Database.writeErrorLog('OutcomeParser.processOutcome', 'CONTACT_NOT_FOUND', `Attempted to set outcome '${result}' for unknown email ${searchEmail}`, searchEmail);
+      return { success: false, reason: 'contact_not_found' };
     }
 
-    threads.forEach(thread => {
-      try {
-        const messages = thread.getMessages();
-        if (messages.length === 0) return;
+    const contact = match.rowData;
+    const previousState = contact.lifecycle_state;
 
-        // Process the latest message in the thread
-        const msg = messages[messages.length - 1];
-        const subject = msg.getSubject() || '';
-        
-        // Parse subject: e.g. "Re: WON:4a5b6c7d8e:event_id_string"
-        // Regex to extract outcome, email hash, and event ID
-        const match = subject.match(/(WON|LOST):([a-f0-9]+):([a-zA-Z0-9_@\-\.]+)/i);
-        
-        if (match) {
-          const outcome = match[1].toUpperCase(); // WON or LOST
-          const emailHash = match[2];
-          const eventId = match[3];
-
-          this.processOutcome(outcome, emailHash, eventId);
-        }
-
-        // Mark thread as read so it isn't parsed again
-        thread.markRead();
-
-      } catch (err) {
-        ErrorHandler.logError('OutcomeParser.parseGmailOutcomes', 'PARSING_ROW_FAILED', err.toString(), thread.getFirstMessageSubject());
-      }
-    });
-  },
-
-  // Process specific outcome and transition state
-  processOutcome(outcome, emailHash, eventId) {
-    // Find contact by email hash
-    const contacts = Database.getContacts(c => c.email_hash === emailHash);
-    
-    if (contacts.length === 0) {
-      ErrorHandler.logError(
-        'OutcomeParser.processOutcome', 
-        'CONTACT_NOT_FOUND_FOR_HASH', 
-        `No contact found for email hash: ${emailHash}`, 
-        JSON.stringify({ outcome, eventId })
-      );
-      return;
+    let targetState = '';
+    if (result === 'won') {
+      targetState = 'won';
+    } else if (result === 'lost') {
+      targetState = 'lost';
+    } else if (result === 'no-show' || result === 'active') {
+      targetState = 'active';
+    } else {
+      return { success: false, reason: 'invalid_outcome_result' };
     }
 
-    const match = contacts[0];
-    let contact = match.data;
-
-    // State Mapping: WON -> won, LOST -> lost
-    const newState = outcome === 'WON' ? 'won' : 'lost';
-
-    // Scenario 17: Outcome logging must be idempotent
-    if (contact.lifecycle_state === newState) {
-      Logger.log(`Contact ${contact.email} is already in state ${newState}. No state change.`);
-      return; 
+    // Idempotent: If already in target state, return success without duplicate logs
+    if (previousState === targetState) {
+      return { success: true, contact, unchanged: true };
     }
 
-    // Attempt transition (transitionState handles validation & status tags)
-    contact = DedupeMerge.transitionState(contact, newState, 'gmail-mailto');
-    
-    // Save updated contact in sheet
+    // Transition state
+    contact.lifecycle_state = targetState;
+    contact.last_processed_at = new Date().toISOString();
+
+    // Log to Supabase audit log
+    Database.writeAuditLog(searchEmail, 'lifecycle_state', previousState, targetState);
+
+    // Save updated contact in Supabase Knowledge Graph
     Database.saveContact(contact);
 
-    // If state became won: sync to EmailOctopus (to unsubscribe from marketing newsletters)
-    // If state became lost: sync to EmailOctopus (re-nurture allows active flow)
-    try {
-      EmailOctopus.syncContact(contact);
-    } catch (e) {
-      ErrorHandler.logError('OutcomeParser.processOutcome', 'ESP_OUTCOME_SYNC_FAILED', e.toString(), contact.email);
-    }
-
-    // Clean up calendar booking properties
-    try {
-      PropertiesService.getScriptProperties().deleteProperty(`booking_event:${eventId}`);
-      PropertiesService.getScriptProperties().deleteProperty(`booking_time:${eventId}`);
-    } catch (e) {
-      if (typeof global !== 'undefined' && global.MOCK_PROPERTIES) {
-        delete global.MOCK_PROPERTIES[`booking_event:${eventId}`];
-        delete global.MOCK_PROPERTIES[`booking_time:${eventId}`];
-      }
-    }
-
-    Logger.log(`Successfully logged outcome ${outcome} for ${contact.email} (Event: ${eventId})`);
+    return { success: true, contact, previousState, targetState };
   }
 };
+
