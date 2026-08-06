@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Arkay Solutions — Master Workflow Map (Automated State)</title>
+<style>
+  html,body{margin:0;padding:0;background:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1760px;margin:0 auto;padding:24px;}
+  svg{width:100%;height:auto;display:block;}
+  .node-title{font-size:15px;font-weight:600;}
+  .node-sub{font-size:12.5px;font-weight:400;}
+  .section-header{font-size:21px;font-weight:700;fill:#1F2A44;}
+  .section-sub{font-size:13px;fill:#5F5E5A;}
+  .small-label{font-size:12px;fill:#5F5E5A;}
+  .legend-label{font-size:13px;fill:#2C2C2A;}
+  .badge-text{font-size:11px;font-weight:700;fill:#FFFFFF;}
+  .list-title{font-size:15px;font-weight:600;fill:#1F2A44;}
+  .list-item{font-size:12.5px;fill:#444441;}
+  .footnote{font-size:11.5px;fill:#5F5E5A;font-style:italic;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg viewBox="0 0 1700 1560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Arkay Solutions automated master workflow map">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ===== HEADER ===== -->
+<text x="60" y="42" fill="#1F2A44" font-size="28" font-weight="700">Arkay Solutions — Master Workflow Map (Automated State)</text>
+<text x="60" y="68" class="section-sub">Main path runs down the center. Google Apps Script is now the connective tissue between the intake form, Supabase, EmailOctopus, and Google Calendar.</text>
+<text x="60" y="86" class="section-sub">Two independent automations branch off the intake data: the weekly newsletter send (left) and the booking-to-close flow (center, continues down).</text>
+
+<!-- ===== LEGEND ===== -->
+<g>
+  <rect x="550" y="104" width="18" height="18" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.75"/>
+  <text x="574" y="117" class="legend-label">Human step</text>
+  <rect x="700" y="104" width="18" height="18" rx="4" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.75"/>
+  <text x="724" y="117" class="legend-label">External system</text>
+  <rect x="880" y="104" width="18" height="18" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.75"/>
+  <text x="904" y="117" class="legend-label">Supabase (data store)</text>
+  <rect x="1090" y="104" width="18" height="18" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <text x="1114" y="117" class="legend-label">Apps Script (automation)</text>
+  <rect x="1330" y="104" width="18" height="18" rx="4" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.75"/>
+  <text x="1354" y="117" class="legend-label">Decision / human judgment</text>
+</g>
+
+<!-- ===== CENTER MAIN PATH ===== -->
+<text x="550" y="182" class="section-header" font-size="18">Client journey — start to close</text>
+
+<!-- 1: intake form -->
+<g>
+  <rect x="550" y="200" width="460" height="76" rx="10" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.75"/>
+  <circle cx="990" cy="200" r="12" fill="#5F5E5A"/><text x="990" y="204" class="badge-text" text-anchor="middle">1</text>
+  <text x="572" y="230" class="node-title" fill="#2C2C2A">Customer submits intake</text>
+  <text x="572" y="252" class="node-sub" fill="#5F5E5A">Google Form on theangle.framestretching</text>
+  <title>Customer fills out the Google Form embedded on the Angle / framestretching site.</title>
+</g>
+<line x1="780" y1="276" x2="780" y2="306" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 2: verify & store -->
+<g>
+  <rect x="550" y="306" width="460" height="76" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.75"/>
+  <circle cx="990" cy="306" r="12" fill="#534AB7"/><text x="990" y="310" class="badge-text" text-anchor="middle">2</text>
+  <text x="572" y="336" class="node-title" fill="#3C3489">Verify &amp; store</text>
+  <text x="572" y="358" class="node-sub" fill="#534AB7">Data is validated, then written to Supabase</text>
+  <title>Form submission is verified for validity before being written to Supabase — this is the single source of truth.</title>
+</g>
+<line x1="780" y1="382" x2="780" y2="412" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 3: sync to email octopus -->
+<g>
+  <rect x="550" y="412" width="460" height="76" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.75"/>
+  <circle cx="990" cy="412" r="12" fill="#185FA5"/><text x="990" y="416" class="badge-text" text-anchor="middle">3</text>
+  <text x="572" y="442" class="node-title" fill="#0C447C">Sync to EmailOctopus</text>
+  <text x="572" y="464" class="node-sub" fill="#185FA5">Name + email pushed automatically</text>
+  <title>Only name and email are copied out of Supabase into EmailOctopus — EmailOctopus is a mailing list, not the record of truth.</title>
+</g>
+
+<!-- fork -->
+<line x1="780" y1="488" x2="780" y2="520" stroke="#888780" stroke-width="1.5"/>
+<path d="M780 520 L780 560" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" fill="none"/>
+<path d="M780 520 L230 520 L230 560" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)" fill="none"/>
+<text x="792" y="510" class="small-label">splits into two independent automations</text>
+
+<!-- 4: books a call -->
+<g>
+  <rect x="550" y="560" width="460" height="76" rx="10" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.75"/>
+  <circle cx="990" cy="560" r="12" fill="#5F5E5A"/><text x="990" y="564" class="badge-text" text-anchor="middle">4</text>
+  <text x="572" y="590" class="node-title" fill="#2C2C2A">Customer books a call</text>
+  <text x="572" y="612" class="node-sub" fill="#5F5E5A">Self-serve link on Google Calendar</text>
+  <title>The customer picks a time on a self-serve Google Calendar booking page.</title>
+</g>
+<line x1="780" y1="636" x2="780" y2="666" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 5: booking triggers apps script -->
+<g>
+  <rect x="550" y="666" width="460" height="76" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <circle cx="990" cy="666" r="12" fill="#0F6E56"/><text x="990" y="670" class="badge-text" text-anchor="middle">5</text>
+  <text x="572" y="696" class="node-title" fill="#085041">Booking triggers Apps Script</text>
+  <text x="572" y="718" class="node-sub" fill="#0F6E56">Calendar event fires the listener function</text>
+  <title>A new Calendar event is detected by an Apps Script trigger bound to the booking calendar.</title>
+</g>
+<line x1="780" y1="742" x2="780" y2="772" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 6: fetch full record -->
+<g>
+  <rect x="550" y="772" width="460" height="100" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <circle cx="990" cy="772" r="12" fill="#0F6E56"/><text x="990" y="776" class="badge-text" text-anchor="middle">6</text>
+  <text x="572" y="802" class="node-title" fill="#085041">Fetch full customer record</text>
+  <text x="572" y="824" class="node-sub" fill="#0F6E56">Apps Script queries Supabase for</text>
+  <text x="572" y="842" class="node-sub" fill="#0F6E56">name, email, events attended, call history</text>
+  <title>Apps Script calls Supabase and pulls the complete customer record: name, email, events attended, engagement, and prior call history.</title>
+</g>
+<line x1="780" y1="872" x2="780" y2="902" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 7: pre-call digest -->
+<g>
+  <rect x="550" y="902" width="460" height="76" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <circle cx="990" cy="902" r="12" fill="#0F6E56"/><text x="990" y="906" class="badge-text" text-anchor="middle">7</text>
+  <text x="572" y="932" class="node-title" fill="#085041">Pre-call digest sent to Rachel</text>
+  <text x="572" y="954" class="node-sub" fill="#0F6E56">Customer background + Won/Lost buttons</text>
+  <title>Apps Script composes and emails Rachel a digest containing the customer's history, with Won and Lost buttons embedded for after the call.</title>
+</g>
+<line x1="780" y1="978" x2="780" y2="1008" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 8: Rachel runs the call -->
+<g>
+  <rect x="550" y="1008" width="460" height="76" rx="10" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.75"/>
+  <circle cx="990" cy="1008" r="12" fill="#5F5E5A"/><text x="990" y="1012" class="badge-text" text-anchor="middle">8</text>
+  <text x="572" y="1038" class="node-title" fill="#2C2C2A">Rachel runs the call</text>
+  <text x="572" y="1060" class="node-sub" fill="#5F5E5A">Live discovery call with the client</text>
+  <title>Rachel gets on the call with the client, briefed by the pre-call digest.</title>
+</g>
+<line x1="780" y1="1084" x2="780" y2="1114" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 9: won/lost decision -->
+<g>
+  <rect x="550" y="1114" width="460" height="76" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.75"/>
+  <circle cx="990" cy="1114" r="12" fill="#854F0B"/><text x="990" y="1118" class="badge-text" text-anchor="middle">9</text>
+  <text x="572" y="1144" class="node-title" fill="#633806">Rachel marks the outcome</text>
+  <text x="572" y="1166" class="node-sub" fill="#854F0B">Won or Lost button, clicked in the digest email</text>
+  <title>After the call, Rachel clicks Won or Lost directly inside the pre-call digest email — the last manual click in the flow.</title>
+</g>
+<line x1="780" y1="1190" x2="780" y2="1220" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 10: outcome written back -->
+<g>
+  <rect x="550" y="1220" width="460" height="76" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <circle cx="990" cy="1220" r="12" fill="#0F6E56"/><text x="990" y="1224" class="badge-text" text-anchor="middle">10</text>
+  <text x="572" y="1250" class="node-title" fill="#085041">Outcome written back</text>
+  <text x="572" y="1272" class="node-sub" fill="#0F6E56">Apps Script webhook updates Supabase</text>
+  <title>Clicking Won or Lost fires a webhook that writes the outcome into the Supabase knowledge graph, closing the loop on that contact.</title>
+</g>
+<line x1="780" y1="1296" x2="780" y2="1326" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- 11: terminal -->
+<g>
+  <rect x="620" y="1326" width="320" height="56" rx="28" fill="#1F2A44"/>
+  <text x="780" y="1360" text-anchor="middle" class="node-title" fill="#FFFFFF">End of client journey</text>
+</g>
+
+<!-- ===== LEFT COLUMN: NEWSLETTER AUTOMATION ===== -->
+<text x="60" y="510" class="section-header" font-size="18">Newsletter automation</text>
+<text x="60" y="530" class="section-sub">Runs on its own weekly timer, independent of the booking flow</text>
+
+<g>
+  <rect x="60" y="560" width="340" height="76" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <circle cx="378" cy="560" r="12" fill="#0F6E56"/><text x="378" y="564" class="badge-text" text-anchor="middle">A</text>
+  <text x="82" y="590" class="node-title" fill="#085041">Weekly cron check</text>
+  <text x="82" y="612" class="node-sub" fill="#0F6E56">Apps Script runs every 7 days</text>
+  <title>A time-based Apps Script trigger fires once a week to check for new content.</title>
+</g>
+<line x1="230" y1="636" x2="230" y2="660" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<g>
+  <rect x="60" y="660" width="340" height="90" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.75"/>
+  <circle cx="378" cy="660" r="12" fill="#854F0B"/><text x="378" y="664" class="badge-text" text-anchor="middle">B</text>
+  <text x="82" y="694" class="node-title" fill="#633806">New issue posted</text>
+  <text x="82" y="716" class="node-sub" fill="#854F0B">in the last 7 days?</text>
+  <title>The script checks whether a new newsletter issue has been published since the last check.</title>
+</g>
+
+<!-- loop back (no) -->
+<path d="M400 705 C440 705 440 598 400 598" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="408" y="650" class="small-label">no — wait 7 days</text>
+
+<!-- yes down to send -->
+<line x1="230" y1="750" x2="230" y2="780" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="245" y="770" class="small-label">yes</text>
+
+<g>
+  <rect x="60" y="780" width="340" height="76" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <circle cx="378" cy="780" r="12" fill="#0F6E56"/><text x="378" y="784" class="badge-text" text-anchor="middle">C</text>
+  <text x="82" y="810" class="node-title" fill="#085041">Send newsletter</text>
+  <text x="82" y="832" class="node-sub" fill="#0F6E56">Emailed to every EmailOctopus contact</text>
+  <title>The newsletter is emailed to everyone whose contact record exists in EmailOctopus.</title>
+</g>
+<text x="60" y="880" class="footnote">Rachel still writes each issue by hand —</text>
+<text x="60" y="898" class="footnote">the one manual step left in this loop.</text>
+
+<!-- ===== RIGHT COLUMN: SYSTEMS ===== -->
+<text x="1080" y="182" class="section-header" font-size="18">Systems</text>
+
+<g><rect x="1080" y="200" width="560" height="70" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.75"/>
+  <text x="1102" y="228" class="node-title" fill="#0C447C">theangle.framestretching</text>
+  <text x="1102" y="250" class="node-sub" fill="#185FA5">Hosts the intake Google Form</text></g>
+
+<g><rect x="1080" y="284" width="560" height="70" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.75"/>
+  <text x="1102" y="312" class="node-title" fill="#3C3489">Supabase</text>
+  <text x="1102" y="334" class="node-sub" fill="#534AB7">Single source of truth — verifies, stores &amp; de-dupes every contact</text></g>
+
+<g><rect x="1080" y="368" width="560" height="70" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.75"/>
+  <text x="1102" y="396" class="node-title" fill="#0C447C">EmailOctopus</text>
+  <text x="1102" y="418" class="node-sub" fill="#185FA5">Holds name + email only; sends the newsletter</text></g>
+
+<g><rect x="1080" y="452" width="560" height="70" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.75"/>
+  <text x="1102" y="480" class="node-title" fill="#0C447C">Google Calendar</text>
+  <text x="1102" y="502" class="node-sub" fill="#185FA5">Self-serve booking link; fires the trigger</text></g>
+
+<g><rect x="1080" y="536" width="560" height="140" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <text x="1102" y="564" class="node-title" fill="#085041">Google Apps Script</text>
+  <text x="1102" y="586" class="node-sub" fill="#0F6E56">The glue connecting everything:</text>
+  <text x="1102" y="604" class="node-sub" fill="#0F6E56">• Weekly newsletter check (cron)</text>
+  <text x="1102" y="622" class="node-sub" fill="#0F6E56">• Booking listener (Calendar trigger)</text>
+  <text x="1102" y="640" class="node-sub" fill="#0F6E56">• Outcome webhook (Won/Lost button)</text></g>
+
+<text x="1080" y="706" class="section-header" font-size="16">What Supabase stores per contact</text>
+<g><rect x="1080" y="730" width="560" height="180" rx="10" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.75"/>
+  <text x="1102" y="756" class="list-item">• Name and email</text>
+  <text x="1102" y="778" class="list-item">• Source (form, event, etc.)</text>
+  <text x="1102" y="800" class="list-item">• Events attended</text>
+  <text x="1102" y="822" class="list-item">• Discovery call history</text>
+  <text x="1102" y="844" class="list-item">• Engagement notes</text>
+  <text x="1102" y="866" class="list-item">• Won / lost outcomes</text>
+  <text x="1102" y="888" class="list-item">• Timestamps for every event above</text></g>
+
+<text x="1080" y="940" class="section-header" font-size="16">What automation solved</text>
+<g><rect x="1080" y="964" width="560" height="160" rx="10" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.75"/>
+  <text x="1102" y="990" class="list-item">• No more manual CSV imports</text>
+  <text x="1102" y="1012" class="list-item">• No duplicate records across four tools</text>
+  <text x="1102" y="1034" class="list-item">• One schema instead of four mismatched ones</text>
+  <text x="1102" y="1056" class="list-item">• Full engagement history available before every call</text></g>
+
+<!-- ===== BOTTOM STRIP: SECURITY & GUARDRAILS ===== -->
+<text x="60" y="1410" class="section-header" font-size="18">Security &amp; guardrails</text>
+
+<g><rect x="60" y="1426" width="380" height="70" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <text x="82" y="1454" class="node-title" fill="#085041">Supabase row-level security</text>
+  <text x="82" y="1476" class="node-sub" fill="#0F6E56">Contacts scoped to Arkay's own keys</text></g>
+
+<g><rect x="460" y="1426" width="380" height="70" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+  <text x="482" y="1454" class="node-title" fill="#085041">Apps Script OAuth scopes</text>
+  <text x="482" y="1476" class="node-sub" fill="#0F6E56">Calendar read + Gmail send only</text></g>
+
+<g><rect x="860" y="1426" width="380" height="70" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.75"/>
+  <text x="882" y="1454" class="node-title" fill="#0C447C">EmailOctopus consent</text>
+  <text x="882" y="1476" class="node-sub" fill="#185FA5">Unsubscribe flags always honored</text></g>
+
+<g><rect x="1260" y="1426" width="380" height="70" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.75"/>
+  <text x="1282" y="1454" class="node-title" fill="#633806">Domain auth</text>
+  <text x="1282" y="1476" class="node-sub" fill="#854F0B">SPF/DKIM/DMARC before scaling sends</text></g>
+
+</svg>
+</div>
+</body>
+</html>
